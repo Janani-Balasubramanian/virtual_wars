@@ -4,7 +4,7 @@ import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/ap
 import { MapPin, Navigation, Search, Layers, Info } from 'lucide-react';
 
 // Placeholder API Key - User should replace with real key from Google Cloud Console
-const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "YOUR_GOOGLE_MAPS_API_KEY";
 
 const mapContainerStyle = {
   width: '100%',
@@ -36,13 +36,13 @@ const PollingStationFinder = () => {
           <p className="text-slate-400 text-sm">Locate your assigned booth in real-time using Google Maps.</p>
         </div>
         <div className="flex gap-2">
-          <button 
+          <button
             aria-label="Map Layers"
             className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all"
           >
             <Layers className="w-5 h-5 text-slate-400" />
           </button>
-          <button 
+          <button
             aria-label="Help Information"
             className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all"
           >
@@ -52,18 +52,18 @@ const PollingStationFinder = () => {
       </div>
 
       <div className="relative flex-1 min-h-[400px] bg-slate-900 overflow-hidden">
-        {GOOGLE_MAPS_API_KEY === "YOUR_GOOGLE_MAPS_API_KEY" ? (
+        {GOOGLE_MAPS_API_KEY === "AIzaSyCjJwFohJMLHzTkTePxhj2NcmORHhrEqok" ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center space-y-4">
-             <div className="w-20 h-20 bg-blue-600/10 rounded-full flex items-center justify-center">
-                <MapPin className="w-10 h-10 text-blue-500" />
-             </div>
-             <h4 className="text-xl font-bold text-white">Google Maps Integration Ready</h4>
-             <p className="text-slate-400 max-w-xs">
-               To activate real-time mapping, please provide your <strong>Google Maps API Key</strong> in the <code>PollingStationFinder.tsx</code> file.
-             </p>
-             <div className="bg-white/5 p-4 rounded-xl border border-white/10 text-xs font-mono text-blue-300">
-               gcloud services enable maps-backend.googleapis.com
-             </div>
+            <div className="w-20 h-20 bg-blue-600/10 rounded-full flex items-center justify-center">
+              <MapPin className="w-10 h-10 text-blue-500" />
+            </div>
+            <h4 className="text-xl font-bold text-white">Google Maps Integration Ready</h4>
+            <p className="text-slate-400 max-w-xs">
+              To activate real-time mapping, please provide your <strong>Google Maps API Key</strong> in the <code>PollingStationFinder.tsx</code> file.
+            </p>
+            <div className="bg-white/5 p-4 rounded-xl border border-white/10 text-xs font-mono text-blue-300">
+              gcloud services enable maps-backend.googleapis.com
+            </div>
           </div>
         ) : (
           <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
@@ -80,11 +80,11 @@ const PollingStationFinder = () => {
                 ],
               }}
             >
-              <Marker 
-                position={mockBooth.location} 
+              <Marker
+                position={mockBooth.location}
                 onClick={() => setSelectedBooth(mockBooth)}
               />
-              
+
               {selectedBooth && (
                 <InfoWindow
                   position={selectedBooth.location}
@@ -104,13 +104,13 @@ const PollingStationFinder = () => {
         <div className="absolute top-6 left-6 right-6 z-20">
           <div className="bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-2xl p-2 flex items-center gap-3 shadow-2xl">
             <Search className="w-5 h-5 text-slate-500 ml-3" aria-hidden="true" />
-            <input 
-              type="text" 
-              placeholder="Search EPIC ID, Ward or Locality..." 
+            <input
+              type="text"
+              placeholder="Search EPIC ID, Ward or Locality..."
               aria-label="Search for polling station"
               className="bg-transparent border-none outline-none text-white text-sm flex-1 py-2"
             />
-            <button 
+            <button
               onClick={() => alert("Searching for your current location...")}
               className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-all focus:ring-2 focus:ring-blue-400 focus:outline-none"
             >
@@ -121,7 +121,7 @@ const PollingStationFinder = () => {
 
         {/* Polling Details Card */}
         <div className="absolute bottom-6 left-6 right-6 z-20">
-          <motion.div 
+          <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             className="bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl flex items-center justify-between gap-6"
@@ -136,9 +136,9 @@ const PollingStationFinder = () => {
                 <p className="text-slate-400 text-xs mt-1">Approx. 15 min walking distance</p>
               </div>
             </div>
-            <a 
+            <a
               href={`https://www.google.com/maps/dir/?api=1&destination=${mockBooth.location.lat},${mockBooth.location.lng}`}
-              target="_blank" 
+              target="_blank"
               rel="noopener noreferrer"
               aria-label="Get directions to the polling station"
               className="h-12 px-6 bg-white text-slate-950 font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-200 transition-all shrink-0 focus:ring-2 focus:ring-white focus:outline-none"
