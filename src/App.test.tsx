@@ -17,6 +17,10 @@ vi.mock('@react-google-maps/api', () => ({
   InfoWindow: ({ children }: any) => <div>{children}</div>
 }));
 
+vi.mock('./components/VoterCertificate', () => ({
+  default: () => <div>Voter Certificate</div>
+}));
+
 describe('App Integration', () => {
   it('navigates through the full voter journey', async () => {
     render(<App />);
@@ -28,7 +32,7 @@ describe('App Integration', () => {
     // 2. Timeline Page - Check if Timeline is visible
     await waitFor(() => {
       expect(screen.getByText(/Step 1/i)).toBeInTheDocument();
-    });
+    }, { timeout: 5000 });
     const timelineTitles = screen.getAllByText(/Voter Registration/i);
     expect(timelineTitles.length).toBeGreaterThan(0);
     

@@ -13,9 +13,12 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import VoterStatusSelector from './components/VoterStatusSelector';
-import ElectionTimeline from './components/ElectionTimeline';
-import PollingStationFinder from './components/PollingStationFinder';
-import ExpertGuide from './components/ExpertGuide';
+
+// Lazy load heavy components for efficiency
+const ElectionTimeline = React.lazy(() => import('./components/ElectionTimeline'));
+const PollingStationFinder = React.lazy(() => import('./components/PollingStationFinder'));
+const ExpertGuide = React.lazy(() => import('./components/ExpertGuide'));
+const VoterCertificate = React.lazy(() => import('./components/VoterCertificate'));
 
 import { logVoterStatus } from './lib/firebase';
 
@@ -111,16 +114,25 @@ function App() {
               </p>
             </motion.div>
 
-            <ElectionTimeline status={status} />
-            
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-12">
-              <div className="lg:col-span-2">
-                <PollingStationFinder />
+            <React.Suspense fallback={
+              <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-blue-400 font-bold animate-pulse">Loading personalized guide...</p>
               </div>
-              <div className="lg:col-span-1">
-                <ExpertGuide status={status} />
+            }>
+              <ElectionTimeline status={status} />
+              
+              <VoterCertificate status={status} />
+              
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-12">
+                <div className="lg:col-span-2">
+                  <PollingStationFinder />
+                </div>
+                <div className="lg:col-span-1">
+                  <ExpertGuide status={status} />
+                </div>
               </div>
-            </div>
+            </React.Suspense>
           </div>
         )}
       </main>
