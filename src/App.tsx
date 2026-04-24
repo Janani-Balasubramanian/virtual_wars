@@ -17,11 +17,29 @@ import ElectionTimeline from './components/ElectionTimeline';
 import PollingStationFinder from './components/PollingStationFinder';
 import ExpertGuide from './components/ExpertGuide';
 
+import { logVoterStatus } from './lib/firebase';
+
 import type { VoterStatus } from './types';
 
+/**
+ * Main Application Component for the Election Assistant.
+ * Manages the global state of the user's voter status and handles transitions
+ * between the landing page, interactive timeline, and polling station finder.
+ */
 function App() {
   const [status, setStatus] = useState<VoterStatus>(null);
   const [step, setStep] = useState(0);
+
+  /**
+   * Updates the user's voter status and logs the interaction to Firebase.
+   * @param newStatus The selected voter status from the selector component.
+   */
+  const handleStatusChange = (newStatus: VoterStatus) => {
+    setStatus(newStatus);
+    if (newStatus) {
+      logVoterStatus(newStatus);
+    }
+  };
 
   const resetProgress = () => {
     setStatus(null);
@@ -42,33 +60,42 @@ function App() {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-3"
         >
-          <div className="bg-election-blue p-2 rounded-lg shadow-lg shadow-blue-500/20">
-            <Vote className="w-8 h-8 text-white" />
+          <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.3)]">
+            <Vote className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-200">
-              VoterGuide AI
-            </h1>
-            <p className="text-xs text-slate-400 font-medium tracking-widest uppercase">Expert Election Assistant</p>
+            <h1 className="text-2xl font-black tracking-tighter text-white">VoterGuide AI</h1>
+            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest leading-none">Expert Election Assistant</p>
           </div>
         </motion.div>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-          <a href="#" className="hover:text-blue-400 transition-colors">Resources</a>
-          <a href="#" className="hover:text-blue-400 transition-colors">Important Dates</a>
-          <a href="#" className="hover:text-blue-400 transition-colors">FAQ</a>
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-4"
+        >
           <button 
-            onClick={resetProgress}
-            className="px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-all text-white"
+            onClick={() => alert("Redirecting to Google Account Sign-In...")}
+            className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-sm font-bold transition-all"
+            aria-label="Sign in with Google"
           >
-            Start Over
+            <Globe className="w-4 h-4 text-blue-400" />
+            <span className="hidden md:inline">Sign In</span>
           </button>
-        </nav>
+          {status && (
+            <button 
+              onClick={resetProgress}
+              className="px-4 py-2 bg-red-600/10 hover:bg-red-600/20 text-red-400 text-sm font-bold rounded-xl transition-all"
+            >
+              Start Over
+            </button>
+          )}
+        </motion.div>
       </header>
 
       <main className="container mx-auto px-6 pb-24">
         {!status ? (
-          <VoterStatusSelector onSelect={setStatus} />
+          <VoterStatusSelector onSelect={handleStatusChange} />
         ) : (
           <div className="max-w-5xl mx-auto space-y-12">
             <motion.div 
