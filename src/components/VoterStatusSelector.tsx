@@ -88,15 +88,16 @@ const VoterStatusSelector: React.FC<Props> = ({ onSelect }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 * index + 0.3 }}
             onClick={() => onSelect(item.id as VoterStatus)}
-            className="group relative text-left p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all overflow-hidden"
+            aria-label={`Select ${item.title} status`}
+            className="group relative text-left p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all overflow-hidden focus:ring-2 focus:ring-blue-500 focus:outline-none focus:bg-white/10"
           >
-            <div className={`w-14 h-14 rounded-2xl ${item.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
+            <div className={`w-14 h-14 rounded-2xl ${item.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`} aria-hidden="true">
               <item.icon className="w-7 h-7 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-3">{item.title}</h3>
             <p className="text-slate-400 leading-relaxed">{item.description}</p>
             
-            <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true">
               <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
                 <div className="w-2 h-2 rounded-full bg-blue-400" />
               </div>
