@@ -182,7 +182,7 @@ const ELECTION_TIMELINE = [
   },
   {
     phase: 'Phase 5',
-    title: 'National Polling Day (Vote Cast)',
+    title: 'Example Polling Day (Demo)',
     dateStr: 'February 14, 2027',
     targetDate: new Date('2027-02-14T07:00:00'),
     status: 'upcoming',
@@ -239,7 +239,7 @@ export default function App() {
   const persona = VOTER_PERSONAS[selectedPersonaId];
 
   const [activeTab, setActiveTab] = useState('assistant'); // 'assistant', 'simulator', 'verifier', 'timeline', 'locator'
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
 
   const [toast, setToast] = useState(null);
   const showToast = (message, title = 'Notice') => {
@@ -268,8 +268,8 @@ export default function App() {
     boothName: 'St. George Civic High School, Hall 3',
     address: 'Near Central Heritage Arch, Sector 4, Chennai, TN',
     constituency: '018 - Harbour Central',
-    bloName: 'K. Senthil Kumar (BLO)',
-    bloPhone: '+91 98401 22345',
+    bloName: 'Example official (fictional)',
+    bloPhone: 'No real contact details',
     distance: '0.45 km away (8 min walk)',
     wheelchairRamp: true,
     queueTime: 'Normal (~6-10 min)'
@@ -368,8 +368,8 @@ export default function App() {
   }, []);
 
   const handleAddToCalendar = () => {
-    const title = encodeURIComponent('CivicWise: National General Polling Day 2027');
-    const details = encodeURIComponent('Cast your sovereign vote! Remember to bring your EPIC card or an accepted alternate government photo ID. Polling booths open 7:00 AM - 6:00 PM.');
+    const title = encodeURIComponent('CivicWise: CivicWise practice session (fictional date)');
+    const details = encodeURIComponent('Educational practice reminder only. This is not an official election date. Verify real schedules with the Election Commission of India.');
     const location = encodeURIComponent(locatorResult.boothName + ', ' + locatorResult.address);
     const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=20270214T013000Z/20270214T123000Z&details=${details}&location=${location}`;
     window.open(gCalUrl, '_blank', 'noopener,noreferrer');
@@ -386,10 +386,10 @@ export default function App() {
       'DTSTAMP:20260923T120000Z',
       'DTSTART:20270214T013000Z',
       'DTEND:20270214T123000Z',
-      'SUMMARY:National General Polling Day 2027 - Cast Your Vote',
-      'DESCRIPTION:National General Polling Day. Remember to carry your EPIC card or accepted alternate ID. Verified via CivicWise.',
+      'SUMMARY:CivicWise educational demo - fictional date',
+      'DESCRIPTION:Educational demo reminder only. Fictional date and location. Consult the Election Commission for real schedules.',
       'LOCATION:' + locatorResult.boothName,
-      'STATUS:CONFIRMED',
+      'STATUS:TENTATIVE',
       'END:VEVENT',
       'END:VCALENDAR'
     ].join('\r\n');
@@ -409,7 +409,7 @@ export default function App() {
     {
       id: 'welcome-1',
       sender: 'assistant',
-      text: `Greetings! I am your **CivicWise Election Education Assistant** built for *Prompt Wars Virtual 2026 | Built with Google Antigravity*. \n\nI am configured for **${persona.name}** mode. How can I assist you with voter registration, polling station rules, EVM & VVPAT procedures, or document eligibility today?`,
+      text: `Greetings! I am your **CivicWise Election Education Assistant** created by **Janani** for *Prompt Wars Virtual 2026*. \n\nI am configured for **${persona.name}** mode. How can I assist you with voter registration, polling station rules, EVM & VVPAT procedures, or document eligibility today?`,
       timestamp: 'Just now'
     }
   ]);
@@ -418,7 +418,7 @@ export default function App() {
   const chatBottomRef = useRef(null);
 
   useEffect(() => {
-    chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > 1) chatBottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [messages, isGenerating]);
 
   const handlePersonaSelect = (id) => {
@@ -447,48 +447,16 @@ export default function App() {
     setMessages(prev => [...prev, userMsg]);
     setIsGenerating(true);
 
-    const systemPrompt = `You are CivicWise, an elite, non-partisan, highly authoritative Election Education Specialist.
-Current voter persona: "${persona.name}" (${persona.badge}).
-Primary application form for this persona: "${persona.primaryForm}".
-Your answers must be:
-1. Formatted cleanly with bold luxury headings, concise bullet points, and actionable guidance.
-2. Factually accurate regarding Form 6 (new voter), Form 6A (overseas/NRI), Form 7 (objection/deletion), Form 8 (shifting/correction), and Form 12D (home voting for 85+ and PwD).
-3. Clear about the 4-step polling booth walkthrough (Officer 1: ID check, Officer 2: Indelible ink cuticle mark & Register 17A signature, Officer 3: Voter slip check, Voting booth: Blue button, 7-second transparent VVPAT slip window, audio beep).
-4. State acceptable alternative IDs if EPIC is missing (Passport, Driving License, PAN, Aadhaar, MNREGA card, Bank passbook with photo, Pension card).
-5. Tone: Dignified, warm, civic-minded, and non-partisan.`;
-
     try {
-      const apiKey = "";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-      const payload = {
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: `System Context: ${systemPrompt}\n\nVoter Query: ${questionText}` }]
-          }
-        ],
-        systemInstruction: {
-          parts: [{ text: systemPrompt }]
-        }
-      };
-
-      const response = await fetch(apiUrl, {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ message: questionText, persona: selectedPersonaId })
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
-      }
-
       const data = await response.json();
-      const answer = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (!answer) {
-        throw new Error("No text content returned");
-      }
+      if (!response.ok) throw new Error(data.error || 'Live chat is unavailable.');
+      const answer = data.answer;
+      if (!answer) throw new Error('No answer was returned.');
 
       const botMsg = {
         id: `b-${Date.now()}`,
@@ -502,8 +470,8 @@ Your answers must be:
         speakText(answer);
       }
     } catch (err) {
-      console.warn("Using contextual offline intelligent knowledge engine:", err);
-      const fallbackReply = generateContextualFallback(questionText, persona);
+      // Clearly distinguish static guidance from a live AI response.
+      const fallbackReply = `**Live chat unavailable.** ${err instanceof Error ? err.message : 'Please try again later.'}\n\n**Built-in demo guidance (not an AI response):**\n\n${generateContextualFallback(questionText, persona)}\n\nCheck current requirements at https://voters.eci.gov.in.`;
       const botMsg = {
         id: `b-${Date.now()}`,
         sender: 'assistant',
@@ -527,7 +495,7 @@ Your answers must be:
       return `### 🗳️ The 7-Second VVPAT Verification Protocol\n\nWhen you press your chosen candidate's blue button on the **Electronic Voting Machine (EVM)**:\n\n1. **Red LED Glows:** The candidate indicator lights up immediately.\n2. **Transparent Window Lights Up:** Inside the attached **Voter Verifiable Paper Audit Trail (VVPAT)** unit, a bright LED illuminates.\n3. **Printed Paper Slip Visible:** You will see a physical slip showing:\n   - **Candidate Serial Number**\n   - **Candidate Name**\n   - **Party Symbol**\n4. **7-Second Hold:** The slip stays visible behind the viewing glass for **exactly 7 seconds** so you can visually confirm your vote was cast as intended.\n5. **Automated Cut & Drop:** The slip is automatically cut and falls into a tamper-evident sealed dropbox below.\n6. **Audio Beep:** A continuous loud audio tone sounds from the Control Unit, confirming the vote has been permanently tallied.`;
     }
 
-    if (q.includes('form 6') || q.includes('18') || q.includes('first time') || q.includes('new voter')) {
+    if ((/\bform 6\b/.test(q) && !q.includes('form 6a')) || q.includes('18') || q.includes('first time') || q.includes('new voter')) {
       return `### 📝 First-Time Voter Registration via Form 6\n\nCitizens turning 18 on or before the four qualifying dates (Jan 1, Apr 1, Jul 1, Oct 1) are eligible.\n\n**Step-by-Step Registration:**\n1. Visit the official **Voters Service Portal (voters.eci.gov.in)** or download the **ECI Voter Helpline App**.\n2. Sign up with your active mobile number and select **Form 6 (Register as a New Elector)**.\n3. **Mandatory Uploads:**\n   - **Proof of Age:** Birth certificate, Class 10 certificate, Passport, or Aadhaar.\n   - **Proof of Residence:** Water/electricity bill, bank passbook, Indian passport, or registered rental deed.\n   - Recent color passport photograph.\n4. Submit and record your **Reference ID** to track application status online.\n5. A Booth Level Officer (BLO) will conduct doorstep field verification before your digital EPIC is generated.`;
     }
 
@@ -560,6 +528,9 @@ Your answers must be:
       className="min-h-screen text-[#FFF7E2] font-sans selection:bg-[#FFEB97] selection:text-[#583714] relative overflow-x-hidden"
       style={{ backgroundColor: LUXURY_PALETTE.brownDeepBg }}
     >
+      <div className="px-4 py-3 text-sm text-center border-b border-[#FFEB97]/25" style={{background:'#2A1B0E',color:'#FFF7E2'}}>
+        <strong>Educational demo — not an official election service.</strong> Dates, candidates, and booth details are fictional. For real registration and deadlines, visit <a className="underline" href="https://voters.eci.gov.in" target="_blank" rel="noopener noreferrer">the ECI Voters Service Portal</a>.
+      </div>
       {/* Ambient Luxury Gold & Espresso Glow Orbs in Background */}
       <div
         className="fixed top-0 left-1/4 w-[600px] h-[600px] rounded-full blur-[140px] pointer-events-none -z-10 opacity-20 animate-pulse"
@@ -594,14 +565,14 @@ Your answers must be:
           <span className="hidden md:inline-block text-[#9B7E62]">|</span>
           <span className="flex items-center gap-1.5 font-medium text-[#FFF7E2]">
             <span className="w-2 h-2 rounded-full animate-ping" style={{ backgroundColor: LUXURY_PALETTE.goldLight }} />
-            Built with Google Antigravity & Gemini Reasoning Engine
+            Independent learning demo by Janani
           </span>
         </div>
 
         <div className="flex items-center gap-4 text-[11px] text-[#D8BE9E]">
           <span className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5 text-[#FFEB97]" />
-            Roll Revision Window: <strong className="text-[#FFEB97] ml-1">Open</strong>
+            Timeline: <strong className="text-[#FFEB97] ml-1">Sample dates</strong>
           </span>
           <span className="hidden sm:flex items-center gap-1">
             <PhoneHelpIcon />
@@ -665,7 +636,7 @@ Your answers must be:
                       color: LUXURY_PALETTE.goldLight
                     }}
                   >
-                    Antigravity AI
+                    By Janani
                   </span>
                 </div>
                 <p className="text-xs text-[#D8BE9E] font-medium hidden sm:block">
@@ -768,7 +739,7 @@ Your answers must be:
             >
               <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase text-[#FFEB97]">
                 <Clock className="w-4 h-4 animate-pulse text-[#FFEB97]" />
-                <span>Countdown to Polls:</span>
+                <span>Demo countdown:</span>
               </div>
               <div className="flex items-center gap-1.5 font-mono text-sm font-black">
                 <span className="bg-[#120C06] px-2 py-0.5 rounded text-[#FFF7E2] border border-[#FFEB97]/20">{timeLeft.days}d</span>:
@@ -919,7 +890,7 @@ Your answers must be:
                   <span>Recommended Questions</span>
                 </div>
                 <p className="text-xs text-[#D8BE9E] mb-4">
-                  Tap any preset to prompt the Gemini assistant with scenario-based queries for {persona.name}:
+                  Tap any preset to prompt the CivicWise assistant with scenario-based queries for {persona.name}:
                 </p>
 
                 <div className="space-y-2">
@@ -968,11 +939,11 @@ Your answers must be:
                   </div>
                   <div>
                     <h3 className="text-sm sm:text-base font-bold text-[#FFF7E2] flex items-center gap-2">
-                      Gemini Civic Intelligence Assistant
+                      CivicWise Live Assistant
                       <span className="w-2 h-2 rounded-full bg-[#FFEB97] animate-pulse" />
                     </h3>
                     <p className="text-xs text-[#D8BE9E]">
-                      Grounded in election guidelines, statutory voter forms, and polling day protocols.
+                      AI guidance can be inaccurate. Questions are sent to Google Gemini. Avoid personal or ID details; verify requirements with ECI.
                     </p>
                   </div>
                 </div>
@@ -1096,7 +1067,7 @@ Your answers must be:
                       }}
                     >
                       <Sparkles className="w-4 h-4 animate-spin text-[#FFEB97]" />
-                      <span>Synthesizing constitutional guidance with Gemini reasoning...</span>
+                      <span>Preparing an educational answer...</span>
                     </div>
                   </div>
                 )}
@@ -1781,13 +1752,13 @@ Your answers must be:
             >
               <div>
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#FFEB97] block mb-1">
-                  Google Maps & Spatial Proximity Radar
+                  Example polling-station interface
                 </span>
                 <h3 className="text-2xl font-black text-[#FFF7E2]">
-                  Polling Station & Booth Locator Radar
+                  Polling Station Locator — Demo
                 </h3>
                 <p className="text-xs sm:text-sm text-[#D8BE9E] mt-1 max-w-xl">
-                  Simulate searching by Postal PIN or EPIC Number to view your allocated polling booth, wheelchair accessibility features, and BLO contact details.
+                  Explore fictional booth details using a sample PIN. No electoral-roll lookup is performed. Do not enter an EPIC number or personal data.
                 </p>
               </div>
 
@@ -1797,12 +1768,13 @@ Your answers must be:
                   type="text"
                   value={searchPin}
                   onChange={(e) => setSearchPin(e.target.value)}
-                  placeholder="Enter PIN (e.g. 600001) or EPIC"
+                  aria-label="Sample postal PIN"
+                  placeholder="Sample PIN (e.g. 600001)"
                   className="px-4 py-2.5 rounded-xl text-xs bg-[#120C06] border border-[#FFEB97]/30 text-[#FFF7E2] focus:outline-none focus:border-[#FFEB97]"
                 />
                 <button
                   onClick={() => {
-                    showToast(`Refreshed polling station data for ${searchPin}`, 'Booth Located');
+                    showToast('Showing the same fictional booth for demonstration. Use the official ECI portal for your real polling station.', 'Demo result');
                   }}
                   className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow"
                   style={{ background: LUXURY_PALETTE.goldFoil, color: '#38220A' }}
@@ -1850,7 +1822,7 @@ Your answers must be:
                     <MapPin className="w-3.5 h-3.5 text-rose-400" />
                     <span>Precinct Radar Live</span>
                   </span>
-                  <span className="text-xs font-mono text-[#D8BE9E]">Scale: 1:5000</span>
+                  <span className="text-xs font-mono text-[#D8BE9E]">Illustration · not a real map</span>
                 </div>
 
                 <div
@@ -1893,7 +1865,7 @@ Your answers must be:
                   </h4>
                   <span className="text-xs font-mono text-emerald-400 flex items-center gap-1">
                     <CheckCircle className="w-3.5 h-3.5" />
-                    <span>Verified ECI Booth</span>
+                    <span>Fictional demo booth</span>
                   </span>
                 </div>
 
@@ -1906,20 +1878,20 @@ Your answers must be:
                   <div className="p-3 rounded-xl bg-[#120C06] border border-[#FFEB97]/20 flex items-center justify-between">
                     <div>
                       <span className="text-[#9B7E62] block text-[10px] font-mono uppercase">Wheelchair Ramp & Braille</span>
-                      <strong className="text-emerald-400">100% Accessible (Assisted entry)</strong>
+                      <strong className="text-emerald-400">Example accessibility information</strong>
                     </div>
                     <Accessibility className="w-6 h-6 text-emerald-400" />
                   </div>
 
                   <div className="p-3 rounded-xl bg-[#120C06] border border-[#FFEB97]/20">
-                    <span className="text-[#9B7E62] block text-[10px] font-mono uppercase">Assigned Booth Level Officer</span>
+                    <span className="text-[#9B7E62] block text-[10px] font-mono uppercase">Sample Booth Level Officer</span>
                     <strong className="text-[#FFF7E2] block">{locatorResult.bloName}</strong>
                     <span className="text-[#D8BE9E] font-mono text-[11px]">{locatorResult.bloPhone}</span>
                   </div>
 
                   <div className="p-3 rounded-xl bg-[#120C06] border border-[#FFEB97]/20 flex items-center justify-between">
                     <div>
-                      <span className="text-[#9B7E62] block text-[10px] font-mono uppercase">Average Queue Waiting Time</span>
+                      <span className="text-[#9B7E62] block text-[10px] font-mono uppercase">Illustrative Queue Waiting Time</span>
                       <strong className="text-[#FFF7E2]">{locatorResult.queueTime}</strong>
                     </div>
                     <Clock className="w-5 h-5 text-[#FFEB97]" />
@@ -1928,15 +1900,15 @@ Your answers must be:
 
                 <button
                   onClick={() => {
-                    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locatorResult.boothName + ' ' + locatorResult.address)}`;
+                    const mapsUrl = 'https://electoralsearch.eci.gov.in/';
                     window.open(mapsUrl, '_blank', 'noopener,noreferrer');
-                    showToast('Opening external directions via Google Maps.', 'Maps Navigation');
+                    showToast('Opening the official electoral search portal.', 'Official Search');
                   }}
                   className="w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow transition-all hover:scale-[1.02] cursor-pointer mt-4"
                   style={{ background: LUXURY_PALETTE.goldFoil, color: '#38220A' }}
                 >
                   <MapPin className="w-4 h-4" />
-                  <span>Open Directions in Google Maps</span>
+                  <span>Find your real polling station</span>
                 </button>
               </div>
             </div>
@@ -1991,7 +1963,7 @@ Your answers must be:
                 CivicWise • Election Process Education Assistant
               </p>
               <p className="text-xs text-[#D8BE9E]">
-                Prompt Wars Virtual 2026 | Built with Google Antigravity & Gemini API
+                Prompt Wars Virtual 2026 | Independent project by Janani
               </p>
             </div>
           </div>
@@ -2031,6 +2003,8 @@ function TabNavButton({ active, onClick, icon: Icon, label }) {
   return (
     <button
       onClick={onClick}
+      aria-label={label}
+      aria-pressed={active}
       className="px-3 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer border"
       style={{
         background: active
