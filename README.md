@@ -1,44 +1,28 @@
-# 🗳️ Election Process Education Assistant
-### Prompt Wars Virtual 2026 | Built with Google Antigravity
+<p align="center"><img src=".github/repository-banner.svg" alt="Election Education Assistant — An interactive civic-learning prototype" width="100%" /></p>
 
-A smart, interactive assistant designed to simplify the complexities of the election process. This tool guides users through voter registration, election timelines, and voting day protocols using AI-driven logic.
+<p align="center"><a href="https://github.com/Janani-Balasubramanian">GitHub profile</a> · <a href="https://github.com/Janani-Balasubramanian/portfolio">Portfolio</a> · <a href="https://github.com/Janani-Balasubramanian/virtual_wars/issues">Issues</a></p>
 
----
+# Election Education Assistant
 
-## 🌟 Overview
-Navigating the democratic process can be overwhelming. This project provides a "single source of truth" assistant that breaks down election procedures into manageable, interactive steps.
+A single-component React prototype created for Prompt Wars Virtual 2026. It explores voter journeys through persona-based guidance, checklists, timelines, a simulated voting interface, speech output, and an assistant chat.
 
-**Vertical:** Election Process Education  
-**Tech Stack:** React, TypeScript, Vite, Google Gemini API
+## Explore
 
----
+[`election_process_education_assistant.tsx`](election_process_education_assistant.tsx) contains the implementation, including the interface, sample data, and assistant request logic.
 
-## 🧠 Approach & Logic
-My solution focuses on **Contextual Education**. Instead of giving a wall of text, the assistant:
-1.  **Profiles the User:** Determines if the user is a first-time voter, an NRI, or a senior citizen.
-2.  **Dynamic Roadmap:** Generates a personalized timeline based on the current date and upcoming election cycles.
-3.  **Logical Decision Making:** Uses Gemini-powered reasoning to answer specific user queries regarding document requirements and polling booth protocols.
+| Experience | What the component contains |
+| --- | --- |
+| Voter journeys | First-time, overseas, accessibility, and address-change personas |
+| Preparation | Document checklists and a sample election timeline |
+| Interactive learning | Simulated candidates and polling-process explanations |
+| Assistant | Gemini request logic and browser speech synthesis |
 
----
+## Integration status
 
-## 🛠️ How It Works
-1.  **Interactive Onboarding:** Users select their current status in the voting journey.
-2.  **Smart Assistant Chat:** An integrated Gemini-powered interface handles natural language questions about the election.
-3.  **Google Services Integration:** * **Google Calendar:** (Planned) Integration to set reminders for registration deadlines.
-    * **Google Maps:** Visual cues for understanding polling station proximity.
+This repository contains a TSX component rather than a complete installable application. It does not include `package.json`, a build configuration, or a server.
 
----
+To integrate it, use a React + TypeScript host application, provide React and `lucide-react`, and render the component's default export. Review its styling requirements in the source. The Gemini API key is currently empty; real assistant responses require a configured integration. Keep production service credentials on a server rather than inside a public component.
 
-## 🚀 Key Features
-* **Step-by-Step Guide:** Clear instructions for voter ID registration.
-* **Interactive Timeline:** Visual countdown to key election dates.
-* **Accessibility First:** Designed with high-contrast colors and clean typography for inclusive use.
+## Demo boundaries
 
----
-
-## 🏗️ Installation & Setup
-To run this project locally:
-
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/Janani-Balasubramanian/virtual_wars.git](https://github.com/Janani-Balasubramanian/virtual_wars.git)
+The timeline and candidates are demonstration data, not an official election schedule. Verify registration rules and deadlines with the relevant election authority. Google Calendar integration was listed as planned in the original project description; it is not presented here as a completed feature.
