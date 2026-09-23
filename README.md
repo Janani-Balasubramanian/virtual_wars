@@ -1,6 +1,6 @@
 <p align="center"><img src=".github/repository-banner.svg" alt="Election Education Assistant — An interactive civic-learning prototype" width="100%" /></p>
 
-<p align="center"><a href="https://civicwise-election-education.cozy-pike-5708.chatgpt.site">Open live website</a> · <a href="https://github.com/Janani-Balasubramanian">GitHub profile</a></p>
+<p align="center"><a href="https://civicwise-election-education.jananibalasubraminan.chatgpt.site">Open live website</a> · <a href="https://github.com/Janani-Balasubramanian">GitHub profile</a></p>
 
 # CivicWise — Election Education
 
@@ -13,7 +13,7 @@ An interactive civic-learning website by Janani for Prompt Wars Virtual 2026, wi
 - Document preparation checklists, a sample timeline, and an illustrative booth locator.
 - Live educational AI answers; clearly labelled built-in guidance when the service is unavailable.
 
-[Launch CivicWise](https://civicwise-election-education.cozy-pike-5708.chatgpt.site)
+[Launch CivicWise](https://civicwise-election-education.jananibalasubraminan.chatgpt.site)
 
 ## Run locally
 
